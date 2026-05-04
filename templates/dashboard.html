@@ -1,0 +1,83 @@
+{% extends "base.html" %}
+{% block page_title %}
+    Dashboard 
+    <small style="font-size: 0.6em; color: var(--text-gray); font-weight: 400; margin-left: 10px;">
+        - {{ active_branch.name if active_branch else "Global Overview" }}
+    </small>
+{% endblock %}
+
+{% block content %}
+<div class="dashboard-grid">
+    <div class="summary-cards">
+        <div class="card stat-card">
+            <div class="card-icon cyan-bg"><i class="fa-solid fa-peso-sign"></i></div>
+            <div class="card-details">
+                <span class="card-label">Today's Sales</span>
+                <span class="card-value">PHP {{ "%.2f"|format(total_sales_amount) }}</span>
+            </div>
+        </div>
+        
+        <div class="card stat-card">
+            <div class="card-icon blue-bg"><i class="fa-solid fa-cart-shopping"></i></div>
+            <div class="card-details">
+                <span class="card-label">Total Orders (Today)</span>
+                <span class="card-value">{{ total_orders }}</span>
+            </div>
+        </div>
+        
+        <div class="card stat-card">
+            <div class="card-icon gray-bg"><i class="fa-solid fa-triangle-exclamation"></i></div>
+            <div class="card-details">
+                <span class="card-label">Low Stock Alerts</span>
+                <span class="card-value">{{ low_stock_count }} items</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Low Stock Alerts Section -->
+    {% if low_stock_products %}
+    <div class="card" style="margin-bottom: 2rem; border-left: 4px solid #ff4d4f;">
+        <h3 style="color: #ff4d4f; margin-top: 0;"><i class="fa-solid fa-triangle-exclamation"></i> Action Required: Low Stock Items</h3>
+        <table style="width: 100%; border-collapse: collapse; margin-top: 1rem;">
+            <thead>
+                <tr style="text-align: left; border-bottom: 1px solid #eee;">
+                    <th style="padding: 10px;">Product Name</th>
+                    <th style="padding: 10px;">Category</th>
+                    <th style="padding: 10px;">Current Stock</th>
+                    <th style="padding: 10px;">Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for product in low_stock_products %}
+                <tr style="border-bottom: 1px solid #f9f9f9;">
+                    <td style="padding: 10px;">{{ product.name }}</td>
+                    <td style="padding: 10px;"><span class="badge" style="background: #e6f7ff; color: #1890ff; padding: 4px 8px; border-radius: 4px; font-size: 0.8em;">{{ product.type }}</span></td>
+                    <td style="padding: 10px;">
+                        <strong style="color: {% if product.current_stock == 0 %}#ff4d4f{% else %}#faad14{% endif %};">{{ product.current_stock }} units</strong>
+                    </td>
+                    <td style="padding: 10px;">
+                        <a href="{{ url_for('inventory.index') }}" style="text-decoration: none; background: #007bff; color: white; padding: 5px 10px; border-radius: 4px; font-size: 0.85em;">Restock</a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% endif %}
+
+    <div class="charts-container">
+        <div class="card chart-card">
+            <h3>Revenue Overview (Last 7 Days)</h3>
+            <canvas id="salesOverviewChart"></canvas>
+        </div>
+        <div class="card chart-card">
+            <h3>Sales Forecast (Next 7 Days)</h3>
+            <canvas id="forecastChart"></canvas>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/charts.js') }}"></script>
+{% endblock %}

@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+{% block page_title %}Inventory Logs{% endblock %}
+
+{% block content %}
+<div class="card">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+        <h3 style="color: var(--text-gray);">Historical Movement Tracking</h3>
+        <a href="{{ url_for('inventory.index') }}" class="btn btn-primary">Back to Masterlist</a>
+    </div>
+    
+    <div style="overflow-x:auto;">
+        <table style="width:100%; border-collapse: collapse; text-align: left;">
+            <thead>
+                <tr style="border-bottom: 2px solid var(--border-color);">
+                    <th style="padding: 12px;">Timestamp</th>
+                    <th style="padding: 12px;">Product</th>
+                    <th style="padding: 12px;">Flow Type</th>
+                    <th style="padding: 12px;">Change Amount</th>
+                    <th style="padding: 12px;">Reason / Log Details</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for log in logs %}
+                <tr style="border-bottom: 1px solid var(--border-color);">
+                    <td style="padding: 12px; font-size: 0.9rem; color: var(--text-gray);">
+                        {{ log.created_at.strftime('%Y-%m-%d %H:%M:%S') }}
+                    </td>
+                    <td style="padding: 12px; font-weight: 500;">
+                        {{ log.product.name }}
+                    </td>
+                    <td style="padding: 12px;">
+                        {% if log.log_type == 'IN' %}
+                            <span style="color:var(--success-green); font-weight:bold;"><i class="fa-solid fa-arrow-trend-up"></i> IN</span>
+                        {% else %}
+                            <span style="color:var(--danger-red); font-weight:bold;"><i class="fa-solid fa-arrow-trend-down"></i> OUT</span>
+                        {% endif %}
+                    </td>
+                    <td style="padding: 12px; font-family: monospace; font-size: 1.1rem;">
+                        {% if log.change_amount > 0 %}+{{ log.change_amount }}{% else %}{{ log.change_amount }}{% endif %}
+                    </td>
+                    <td style="padding: 12px; font-style: italic;">
+                        {{ log.reason }}
+                    </td>
+                </tr>
+                {% else %}
+                <tr><td colspan="5" style="padding: 12px; text-align:center;">No inventory logs recorded yet.</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

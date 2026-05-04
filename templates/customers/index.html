@@ -1,0 +1,80 @@
+{% extends "base.html" %}
+{% block page_title %}Customer Management{% endblock %}
+
+{% block content %}
+<div class="charts-container" style="margin-bottom: 20px;">
+    <!-- Add Customer Form -->
+    <div class="card">
+        <h3 style="margin-bottom: 15px; color: var(--text-gray);">Enroll New Customer</h3>
+        <form method="POST" action="{{ url_for('customers.create') }}">
+            <div class="form-group">
+                <label>Full Name</label>
+                <div class="input-icon-wrapper">
+                    <i class="fa-solid fa-user input-icon"></i>
+                    <input type="text" name="name" class="form-control" placeholder="e.g. Maria Clara" required>
+                </div>
+            </div>
+            <div class="form-group">
+                <label>Contact Number</label>
+                <div class="input-icon-wrapper">
+                    <i class="fa-solid fa-phone input-icon"></i>
+                    <input type="text" name="phone" class="form-control" placeholder="09123456789">
+                </div>
+            </div>
+            <div class="form-group">
+                <label>Delivery Address</label>
+                <div class="input-icon-wrapper">
+                    <i class="fa-solid fa-map-location-dot input-icon"></i>
+                    <input type="text" name="address" class="form-control" placeholder="Block 4 Lot 2...">
+                </div>
+            </div>
+            <button type="submit" class="btn btn-primary" style="margin-top: 5px;"><i class="fa-solid fa-user-plus"></i> Save Customer</button>
+        </form>
+    </div>
+    
+    <!-- Info -->
+    <div class="card" style="display:flex; flex-direction:column; justify-content:center; align-items:center; text-align:center;">
+        <i class="fa-solid fa-users text-cyan" style="font-size: 4rem; opacity: 0.5; margin-bottom: 20px;"></i>
+        <h3 style="color: var(--text-gray);">Customer Tracking</h3>
+        <p style="color: var(--text-gray); margin-top: 10px; max-width: 300px;">
+            Enrolled customers can be tracked in the Sales Module to monitor repeat purchases and delivery metrics over time.
+        </p>
+    </div>
+</div>
+
+<div class="card">
+    <h3 style="margin-bottom: 15px; color: var(--text-gray);">Customer Directory</h3>
+    <div style="overflow-x:auto;">
+        <table style="width:100%; border-collapse: collapse; text-align: left;">
+            <thead>
+                <tr style="border-bottom: 2px solid var(--border-color);">
+                    <th style="padding: 12px;">ID</th>
+                    <th style="padding: 12px;">Customer Name</th>
+                    <th style="padding: 12px;">Contact</th>
+                    <th style="padding: 12px;">Delivery Address</th>
+                    <th style="padding: 12px;">Date Enrolled</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for customer in customers %}
+                <tr style="border-bottom: 1px solid var(--border-color); transition: background-color 0.2s;" onmouseover="this.style.backgroundColor='#f4f7f6'" onmouseout="this.style.backgroundColor='transparent'">
+                    <td style="padding: 12px; font-weight: 600; color: var(--text-gray);">C-{{ "%04d"|format(customer.id) }}</td>
+                    <td style="padding: 12px; font-weight: bold;">{{ customer.name }}</td>
+                    <td style="padding: 12px;">
+                        {% if customer.phone %}{{ customer.phone }}{% else %}<span style="color:#ccc;">N/A</span>{% endif %}
+                    </td>
+                    <td style="padding: 12px;">
+                        {% if customer.address %}{{ customer.address }}{% else %}<span style="color:#ccc;">Walk-in</span>{% endif %}
+                    </td>
+                    <td style="padding: 12px; font-size: 0.85rem; color: var(--text-gray);">
+                        {{ customer.created_at.strftime('%Y-%m-%d') }}
+                    </td>
+                </tr>
+                {% else %}
+                <tr><td colspan="5" style="padding: 12px; text-align:center;">No customers listed.</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

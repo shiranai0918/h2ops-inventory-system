@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+{% block page_title %}Login{% endblock %}
+
+{% block content %}
+<div class="login-wrapper">
+    <div class="login-card card">
+        <div class="login-header">
+            <i class="fa-solid fa-droplet text-cyan" style="font-size: 3rem; margin-bottom: 1rem;"></i>
+            <h2>Welcome to H2Ops</h2>
+            <p>Cloud-Based Operations Management System</p>
+        </div>
+        
+        <form method="POST" action="{{ url_for('auth.login') }}" class="login-form">
+            <div class="form-group">
+                <label for="username">Email or Username</label>
+                <div class="input-icon-wrapper">
+                    <i class="fa-solid fa-user input-icon"></i>
+                    <input type="text" id="username" name="username" class="form-control" placeholder="Enter email or username" required>
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label for="password">Password</label>
+                <div class="input-icon-wrapper">
+                    <i class="fa-solid fa-lock input-icon"></i>
+                    <input type="password" id="password" name="password" class="form-control" placeholder="Enter password" required>
+                </div>
+            </div>
+            
+            <button type="submit" class="btn btn-primary btn-block">Log In</button>
+            <div style="text-align: center; margin-top: 1rem;">
+                <a href="{{ url_for('auth.forgot_password') }}" style="color: #64748b; font-size: 0.9rem; text-decoration: none;">Forgot Password?</a>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

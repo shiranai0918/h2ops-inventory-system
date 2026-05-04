@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+{% block page_title %}Add New Staff{% endblock %}
+
+{% block content %}
+<div class="card" style="max-width: 600px; margin: 0 auto;">
+    <form method="POST">
+        <div class="form-group">
+            <label for="username">Username</label>
+            <input type="text" id="username" name="username" class="form-control" placeholder="Enter username" required style="padding-left: 12px;">
+        </div>
+
+        <div class="form-group">
+            <label for="email">Email address</label>
+            <input type="email" id="email" name="email" class="form-control" placeholder="Enter email" required style="padding-left: 12px;">
+        </div>
+
+        <div class="form-group">
+            <label for="branch_id">Assigned Branch</label>
+            <select name="branch_id" id="branch_id" class="form-control" style="padding-left: 12px; appearance: auto;">
+                <option value="">No Branch (Global Access)</option>
+                {% for branch in branches %}
+                <option value="{{ branch.id }}">{{ branch.name }}</option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="role">User Role</label>
+            <select name="role" id="role" class="form-control" style="padding-left: 12px; appearance: auto;">
+                <option value="staff">Staff (Standard Access)</option>
+                <option value="admin">Admin (Full Access)</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="password">Initial Password</label>
+            <input type="password" id="password" name="password" class="form-control" placeholder="Set password" required style="padding-left: 12px;">
+        </div>
+
+        <div style="display: flex; gap: 10px; margin-top: 20px;">
+            <button type="submit" class="btn btn-primary">Create User</button>
+            <a href="{{ url_for('users.index') }}" class="btn" style="background: #eee; text-decoration: none;">Cancel</a>
+        </div>
+    </form>
+</div>
+{% endblock %}

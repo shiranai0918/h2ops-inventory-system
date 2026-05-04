@@ -1,0 +1,44 @@
+Front-end
+-HTML- hypertext mark-up language
+-Vanilla CSS - CASCADE STYLE SHEET (para ma style ang websites)
+-Jinja2 - Act nga bridge ma inject sya sang data halin sa database (product name (mineral, prices direct inject in html.
+
+Back-end(BRAIN kag DATA sang system)
+-python: amo ni sya ang core nga gin gamit ta para mag handle sang tanan nga data or logic(Calculating,checking stocks)
+-Flask:framework handle everything mga routes,user login,branch switching (LIB)
+-MYSQL -database (Store sang mga data) Stuctured query language 
+-SQLAlchemy:Maka create the statement inside sang vscode nga bisan ndi nata mag add statement sa xammp mysql website
+
+Summarize aton nga system  Full stack Architecture. Flask para mag handle sang server side logic and SQLAlchemy manage sang relation sang python kag DATABASE
+Flask Basis & Project Architecture.Jinja2 for templating
+
+
+
+Routes nga nag gamit ta routes. para sa MODALITY (CIA TRIAD)
+(When someone mag visit ka website bal an ka system ta kung din ang eh open nga URL)
+
+BLUEPRINT-WHY? saaton bi nga file may 1000 lines kag BLUE PRINT bali ma tunga ta sa 
+
+| **Auth** | `routes/auth.py` | Login, Logout, Password Resets. |
+| **Sales** | `routes/sales.py` | Recording sales and transactions. |
+| **Inventory** | `routes/inventory.py` | Tracking stock levels of water and caps. |
+| **Reports** | `routes/reports.py` | Sales analytics and forecasting. |
+
+Cycle
+
+User(admin)-click ya ang login button (html)
+flask-pangitaon ya ni ang correct nga BLUEPRINT kag function(routes)
+user- see ang updated page(dashboard)
+
+
+
+Practice 
+nullable- cannot be empty
+
+def index (phyton function show ya ang list sa website halin sa database)
+def create (python function amo ni gina padala ya ang data sa database)
+def add-function (python function ano ni ang eh add nga data sa database)
+def update (python function update ya ang data sa database)
+def delete (python function delete ya ang data sa database)
+ 
+ 

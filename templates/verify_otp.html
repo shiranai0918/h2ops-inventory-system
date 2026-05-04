@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% block page_title %}Verify OTP{% endblock %}
+
+{% block content %}
+<div class="login-wrapper">
+    <div class="login-card card">
+        <div class="login-header">
+            <i class="fa-solid fa-envelope-circle-check text-cyan" style="font-size: 3rem; margin-bottom: 1rem;"></i>
+            <h2>Security Verification</h2>
+            <p>Please enter the 6-digit code sent to your email.</p>
+        </div>
+        
+        <form method="POST" action="{{ url_for('auth.verify_otp') }}" class="login-form">
+            <div class="form-group">
+                <label for="otp_code">OTP Code</label>
+                <div class="input-icon-wrapper">
+                    <i class="fa-solid fa-key input-icon"></i>
+                    <input type="text" id="otp_code" name="otp_code" class="form-control text-center" style="letter-spacing: 1rem; font-size: 1.5rem;" maxlength="6" placeholder="000000" required autofocus>
+                </div>
+            </div>
+            
+            <button type="submit" class="btn btn-primary btn-block">Verify & Login</button>
+        </form>
+        
+        <div class="text-center mt-3" style="margin-top: 1.5rem;">
+            <a href="{{ url_for('auth.login') }}" class="text-muted" style="text-decoration: none; font-size: 0.9rem;"><i class="fa-solid fa-arrow-left"></i> Back to Login</a>
+        </div>
+    </div>
+</div>
+{% endblock %}

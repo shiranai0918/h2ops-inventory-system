@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+{% block page_title %}User Management{% endblock %}
+
+{% block content %}
+<div class="card">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+        <h3 style="margin: 0;">Staff Accounts</h3>
+        <a href="{{ url_for('users.add') }}" class="btn btn-primary">
+            <i class="fa-solid fa-plus"></i> Add New Staff
+        </a>
+    </div>
+
+    <table style="width: 100%; border-collapse: collapse;">
+        <thead>
+            <tr style="text-align: left; border-bottom: 2px solid var(--border-color); color: var(--text-gray);">
+                <th style="padding: 12px;">Username</th>
+                <th style="padding: 12px;">Email</th>
+                <th style="padding: 12px;">Role</th>
+                <th style="padding: 12px;">Branch</th>
+                <th style="padding: 12px; text-align: right;">Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for user in users %}
+            <tr style="border-bottom: 1px solid var(--border-color); transition: 0.2s;">
+                <td style="padding: 12px; font-weight: 600;">{{ user.username }}</td>
+                <td style="padding: 12px;">{{ user.email or '-' }}</td>
+                <td style="padding: 12px;">
+                    <span class="badge" style="background: {% if user.role == 'admin' %}#e6f7ff; color: #1890ff{% else %}#f6ffed; color: #52c41a{% endif %}; padding: 4px 8px; border-radius: 4px; font-size: 0.8em;">
+                        {{ user.role | capitalize }}
+                    </span>
+                </td>
+                <td style="padding: 12px;">{{ user.branch.name if user.branch else "Global" }}</td>
+                <td style="padding: 12px; text-align: right;">
+                    <a href="{{ url_for('users.edit', user_id=user.id) }}" style="color: var(--primary-blue); margin-right: 15px;"><i class="fa-solid fa-pen-to-square"></i></a>
+                    {% if user.id != current_user.id %}
+                    <form action="{{ url_for('users.delete', user_id=user.id) }}" method="POST" style="display: inline;" onsubmit="return confirm('Are you sure you want to delete this user?');">
+                        <button type="submit" style="background: none; border: none; color: var(--danger-red); cursor: pointer;"><i class="fa-solid fa-trash"></i></button>
+                    </form>
+                    {% endif %}
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

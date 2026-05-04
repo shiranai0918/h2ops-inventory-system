@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% block page_title %}Sales Management{% endblock %}
+{% block content %}
+<div class="card">
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 20px;">
+        <h3>Recent Sales</h3>
+        <a href="{{ url_for('sales.create') }}" class="btn btn-primary">Record New Sale</a>
+    </div>
+    <div style="overflow-x:auto;">
+        <table style="width:100%; border-collapse: collapse; text-align: left;">
+            <thead>
+                <tr style="border-bottom: 2px solid var(--border-color);">
+                    <th style="padding: 12px;">ID</th>
+                    <th style="padding: 12px;">Date</th>
+                    <th style="padding: 12px;">Total Amount</th>
+                    <th style="padding: 12px;">Method</th>
+                    <th style="padding: 12px;">Cashier</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for sale in sales %}
+                <tr style="border-bottom: 1px solid var(--border-color);">
+                    <td style="padding: 12px;">#{{ sale.id }}</td>
+                    <td style="padding: 12px;">{{ sale.created_at.strftime('%Y-%m-%d %H:%M') }}</td>
+                    <td style="padding: 12px;">PHP {{ "%.2f"|format(sale.total_amount) }}</td>
+                    <td style="padding: 12px;">{{ sale.payment_method }}</td>
+                    <td style="padding: 12px;">{{ sale.cashier.username | capitalize }}</td>
+                </tr>
+                {% else %}
+                <tr><td colspan="5" style="padding: 12px; text-align:center;">No sales recorded yet.</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

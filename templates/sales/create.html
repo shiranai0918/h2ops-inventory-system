@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+{% block page_title %}Record Sale{% endblock %}
+{% block content %}
+<div class="card" style="max-width: 600px;">
+    <form method="POST" action="{{ url_for('sales.create') }}">
+        <div class="form-group">
+            <label>Product</label>
+            <select name="product_id" class="form-control" required>
+                {% for p in products %}
+                <option value="{{ p.id }}">{{ p.name }} (Stock: {{ p.current_stock }}) - PHP {{ p.price }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="form-group">
+            <label>Quantity</label>
+            <input type="number" name="quantity" class="form-control" min="1" value="1" required>
+        </div>
+        <div class="form-group">
+            <label>Customer (Optional)</label>
+            <select name="customer_id" class="form-control">
+                <option value="">Walk-in Customer</option>
+                {% for c in customers %}
+                <option value="{{ c.id }}">{{ c.name }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="form-group">
+            <label>Payment Method</label>
+            <select name="payment_method" class="form-control">
+                <option value="Cash">Cash</option>
+                <option value="Gcash">Gcash</option>
+            </select>
+        </div>
+        <button type="submit" class="btn btn-primary">Submit Sale</button>
+        <a href="{{ url_for('sales.index') }}" class="btn" style="background:#e2e8f0; margin-left:10px;">Cancel</a>
+    </form>
+</div>
+{% endblock %}

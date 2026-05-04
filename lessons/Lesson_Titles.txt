@@ -1,0 +1,9 @@
+Lesson 1: Introduction & Environment Setup
+Lesson 2: Flask Basics & Project Architecture
+Lesson 3: Database  — The Foundation of Everything
+Lesson 4: Routes — The Road Map of Your System
+Lesson 5: Templates & Jinja2 — The Visual Interface
+Lesson 6: Forms & Data Persistence — Saving User Input
+Lesson 7: Advanced Queries & Reporting — Business Intelligence
+
+
