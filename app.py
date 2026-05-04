@@ -22,8 +22,10 @@ def create_app():
 
     # Configure the app
     app.config['SECRET_KEY'] = 'dev-secret-key-h2ops-secure-token-123'
-    # Use MySQL on localhost (XAMPP default: root, no password)
-    app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('DATABASE_URL')
+    database_url = os.getenv('DATABASE_URL')
+    if not database_url:
+        database_url = 'sqlite:///data.db'
+    app.config['SQLALCHEMY_DATABASE_URI'] = database_url
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
     # Email configuration
