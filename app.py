@@ -24,7 +24,12 @@ def create_app():
     app.config['SECRET_KEY'] = 'dev-secret-key-h2ops-secure-token-123'
     database_url = os.getenv('DATABASE_URL')
     if not database_url:
-        database_url = 'sqlite:///data.db'
+        # Use local XAMPP MySQL for development if no remote database URL is provided.
+        # For example: mysql+pymysql://root@127.0.0.1:3306/h2ops_db
+        if os.getenv('RENDER') or os.getenv('RENDER_EXTERNAL_HOSTNAME') or os.getenv('RENDER_SERVICE_NAME'):
+            database_url = 'sqlite:///data.db'
+        else:
+            database_url = os.getenv('LOCAL_DATABASE_URL', 'mysql+pymysql://root@127.0.0.1:3306/h2ops_db')
     app.config['SQLALCHEMY_DATABASE_URI'] = database_url
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
