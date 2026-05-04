@@ -25,7 +25,7 @@ with app.app_context():
         # 4. Create Users
         pw_hash = bcrypt.generate_password_hash('password123').decode('utf-8')
         admin_pw = bcrypt.generate_password_hash('passwrod123').decode('utf-8')
-        admin = User(username='admin', password_hash=admin_pw, role='admin', branch_id=b1.id, email='rreynieljosh@gmail.com')
+        admin = User(username='admin', password_hash=admin_pw, role='admin', branch_id=b1.id, email='   ')
         staff_tagbak = User(username='staff_tagbak', password_hash=pw_hash, role='staff', branch_id=b1.id, email='staff_tag@h2ops.com')
         staff_zarraga = User(username='staff_zarraga', password_hash=pw_hash, role='staff', branch_id=b2.id, email='staff_zar@h2ops.com')
         staff_leganes = User(username='staff_leganes', password_hash=pw_hash, role='staff', branch_id=b3.id, email='staff_leg@h2ops.com')

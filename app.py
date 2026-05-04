@@ -20,19 +20,20 @@ def create_app():
     # Load environment variables
     load_dotenv()
 
-    # Configure the app
+# Configure the app
     app.config['SECRET_KEY'] = 'dev-secret-key-h2ops-secure-token-123'
     database_url = os.getenv('DATABASE_URL')
+    if database_url and database_url.startswith("postgres://"):
+        database_url = database_url.replace("postgres://", "postgresql://", 1)
+
     if not database_url:
-        # Use local XAMPP MySQL for development if no remote database URL is provided.
-        # For example: mysql+pymysql://root@127.0.0.1:3306/h2ops_db
-        if os.getenv('RENDER') or os.getenv('RENDER_EXTERNAL_HOSTNAME') or os.getenv('RENDER_SERVICE_NAME'):
-            database_url = 'sqlite:///data.db'
-        else:
+        if not os.getenv('RENDER'):
             database_url = os.getenv('LOCAL_DATABASE_URL', 'mysql+pymysql://root@127.0.0.1:3306/h2ops_db')
+        else:
+            database_url = 'sqlite:///data.db'
+            
     app.config['SQLALCHEMY_DATABASE_URI'] = database_url
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-
     # Email configuration
     app.config['MAIL_SERVER'] = os.getenv('MAIL_SERVER', 'smtp.gmail.com')
     app.config['MAIL_PORT'] = int(os.getenv('MAIL_PORT', 587))
