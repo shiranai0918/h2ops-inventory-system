@@ -1,3 +1,4 @@
+
 import os
 from flask import Flask, redirect, url_for, session
 from dotenv import load_dotenv
@@ -22,7 +23,7 @@ def create_app():
     # Configure the app
     app.config['SECRET_KEY'] = 'dev-secret-key-h2ops-secure-token-123'
     # Use MySQL on localhost (XAMPP default: root, no password)
-    app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:@localhost/h2ops_db'
+    app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('DATABASE_URL')
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
     # Email configuration
