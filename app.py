@@ -20,11 +20,10 @@ def create_app():
     app.config['SECRET_KEY'] = os.getenv('SECRET_KEY', 'dev-secret-key-h2ops-secure-token-123')
     
     database_url = os.getenv('DATABASE_URL')
-    # Critical fix for Render/SQLAlchemy compatibility
+    # FIX: SQLAlchemy requires 'postgresql://', Render provides 'postgres://'
     if database_url and database_url.startswith("postgres://"):
         database_url = database_url.replace("postgres://", "postgresql://", 1)
 
-    # Fallback to SQLite only if not on Render (for local dev)
     if not database_url:
         database_url = 'sqlite:///data.db'
             
@@ -68,7 +67,6 @@ def create_app():
     def index():
         return redirect(url_for('main.dashboard'))
 
-    # THIS SECTION IS THE MAGIC: It creates the tables on Render automatically
     with app.app_context():
         db.create_all() 
 
@@ -77,6 +75,5 @@ def create_app():
 app = create_app()
 
 if __name__ == '__main__':
-    # Use the PORT provided by Render, or default to 5000
     port = int(os.environ.get('PORT', 5000))
     app.run(host='0.0.0.0', port=port)
