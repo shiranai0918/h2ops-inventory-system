@@ -7,36 +7,48 @@ import random
 app = create_app()
 
 with app.app_context():
-    # 1. Ensure tables exist
+    # 1. WIPE THE SLATE CLEAN
+    print("Wiping old data...")
+    db.drop_all()
+    
+    # 2. CREATE NEW TABLES
+    print("Creating tables...")
     db.create_all()
 
-    # 2. Check if branches exist to prevent double seeding
-    if Branch.query.first():
-        print("Database already seeded with branches.")
-    else:
-        # 3. Create Branches
-        print("Creating branches...")
-        b1 = Branch(name='Tagbak Branch', location='Iloilo City')
-        b2 = Branch(name='Zarraga Branch', location='Iloilo')
-        b3 = Branch(name='Leganes Branch', location='Iloilo')
-        db.session.add_all([b1, b2, b3])
-        db.session.commit()
+    # 3. CREATE BRANCHES
+    print("Creating branches...")
+    b1 = Branch(name='Tagbak Branch', location='Iloilo City')
+    b2 = Branch(name='Zarraga Branch', location='Iloilo')
+    b3 = Branch(name='Leganes Branch', location='Iloilo')
+    db.session.add_all([b1, b2, b3])
+    db.session.commit()
 
-        # 4. Create Users
-        pw_hash = bcrypt.generate_password_hash('password123').decode('utf-8')
-        admin_pw = bcrypt.generate_password_hash('password123').decode('utf-8')
-        admin = User(username='admin', password_hash=pw_hash, role='admin', branch_id=b1.id, email='rreynieljosh@gmail.com')
-        staff_tagbak = User(username='staff_tagbak', password_hash=pw_hash, role='staff', branch_id=b1.id, email='staff_tag@h2ops.com')
-        staff_zarraga = User(username='staff_zarraga', password_hash=pw_hash, role='staff', branch_id=b2.id, email='staff_zar@h2ops.com')
-        staff_leganes = User(username='staff_leganes', password_hash=pw_hash, role='staff', branch_id=b3.id, email='staff_leg@h2ops.com')
-        db.session.add_all([admin, staff_tagbak, staff_zarraga, staff_leganes])
-        db.session.commit()
+    # 4. CREATE USERS
+    print("Creating users...")
+    pw_hash = bcrypt.generate_password_hash('password123').decode('utf-8')
+    
+    # We set username to your EMAIL so you can login with it
+    admin = User(
+        username='admin',
+        password_hash=pw_hash,
+        role='admin',
+        branch_id=b1.id,
+        email='rreynieljosh@gmail.com'
+    )
+    
+    staff_tagbak = User(username='staff_tagbak', password_hash=pw_hash, role='staff', branch_id=b1.id, email='staff_tag@h2ops.com')
+    staff_zarraga = User(username='staff_zarraga', password_hash=pw_hash, role='staff', branch_id=b2.id, email='staff_zar@h2ops.com')
+    staff_leganes = User(username='staff_leganes', password_hash=pw_hash, role='staff', branch_id=b3.id, email='staff_leg@h2ops.com')
+    
+    db.session.add_all([admin, staff_tagbak, staff_zarraga, staff_leganes])
+    db.session.commit()
 
-        # 5. Create Products for each branch
-        print("Creating products...")
-        branches = [b1, b2, b3]
-        for b in branches:
-            p1 = Product(name=f'Mineral Water - {b.name}', type='Mineral', price=40.0, current_stock=200, branch_id=b.id)
-            db.session.add_all([p1])
-        db.session.commit()
-        print("Database seeded successfully with multi-branch data (Clean Slate)!")
+    # 5. CREATE PRODUCTS
+    print("Creating products...")
+    branches = [b1, b2, b3]
+    for b in branches:
+        p1 = Product(name=f'Mineral Water - {b.name}', type='Mineral', price=40.0, current_stock=200, branch_id=b.id)
+        db.session.add(p1)
+        
+    db.session.commit()
+    print("DATABASE RESET AND SEEDED SUCCESSFULLY!")
