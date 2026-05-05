@@ -15,10 +15,8 @@ def login():
         return redirect(url_for('main.dashboard'))
         
     if request.method == 'POST':
-        identity = request.form.get('username') # Labels are 'username' in HTML, but we treat as identity
+        identity = request.form.get('username')
         password = request.form.get('password')
-        
-        # Check both username and email columns
         user = User.query.filter((User.username == identity) | (User.email == identity)).first()
         
         if user and bcrypt.check_password_hash(user.password_hash, password):
@@ -26,28 +24,35 @@ def login():
                 flash('No email associated with this account. Please contact admin.', 'danger')
                 return redirect(url_for('auth.login'))
             
-            # Generate OTP (6 digits)
+            # 1. Generate OTP
             otp_code = '{:06d}'.format(random.randint(0, 999999))
             otp = OTP(user_id=user.id, otp_code=otp_code, expires_at=datetime.utcnow() + timedelta(minutes=5))
-            db.session.add(otp)
-            db.session.commit()
-            
-            # Send Email
             try:
+                # 2. Save to DB first
+                db.session.add(otp)
+                db.session.commit()
+                
+                # 3. Attempt to send Email
                 msg = Message('Your H2Ops Login OTP', recipients=[user.email])
                 msg.body = f"Your OTP for login is: {otp_code}\n\nIt will expire in 5 minutes."
                 mail.send(msg)
+                
                 session['pending_user_id'] = user.id
                 flash('OTP sent to your email.', 'info')
                 return redirect(url_for('auth.verify_otp'))
+                
             except Exception as e:
-                flash('Failed to send OTP email. Please check configuration. Check terminal for error.', 'danger')
-                print(f"Mail sending error: {e}")
+                db.session.rollback() # Rollback if DB or Mail fails
+                print(f"CRITICAL LOGIN ERROR: {e}")
+                
+                # This prevents the "Internal Server Error" white screen
+                flash(f'System Error: Could not send OTP. (Error: {str(e)})', 'danger')
                 return redirect(url_for('auth.login'))
         else:
             flash('Login Unsuccessful. Please check username and password', 'danger')
             
     return render_template('login.html')
+
 
 @auth_bp.route('/verify_otp', methods=['GET', 'POST'])
 def verify_otp():
@@ -82,7 +87,7 @@ def forgot_password():
         email = request.form.get('email')
         user = User.query.filter_by(email=email).first()
         if user:
-            token = str(uuid.uuid4())
+            token = str(uuid.uuid4())0
             reset = PasswordReset(user_id=user.id, reset_token=token, expires_at=datetime.utcnow() + timedelta(minutes=15))
             db.session.add(reset)
             db.session.commit()
