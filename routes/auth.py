@@ -26,7 +26,7 @@ def login():
             
             # 1. Generate OTP
             otp_code = '{:06d}'.format(random.randint(0, 999999))
-            otp = OTP(user_id=user.id, otp_code=otp_code, expires_at=datetime.utcnow() + timedelta(minutes=5))
+            otp = OTP(user_id=user.id, otp_code=otp_code, expires_at=datetime.utcnow() + timedelta(minutes=15))
             try:
                 # 2. Save to DB first
                 db.session.add(otp)
@@ -87,7 +87,7 @@ def forgot_password():
         email = request.form.get('email')
         user = User.query.filter_by(email=email).first()
         if user:
-            token = str(uuid.uuid4())0
+            token = str(uuid.uuid4())
             reset = PasswordReset(user_id=user.id, reset_token=token, expires_at=datetime.utcnow() + timedelta(minutes=15))
             db.session.add(reset)
             db.session.commit()
