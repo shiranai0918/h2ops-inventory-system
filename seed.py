@@ -7,15 +7,12 @@ import random
 app = create_app()
 
 with app.app_context():
-    # 1. WIPE THE SLATE CLEAN
-    print("Wiping old data...")
+    # 1. FORCE RESET (Only for this run to fix your login)
+    print("Wiping old data to fix login...")
     db.drop_all()
-    
-    # 2. CREATE NEW TABLES
-    print("Creating tables...")
     db.create_all()
 
-    # 3. CREATE BRANCHES
+    # 2. Create Branches
     print("Creating branches...")
     b1 = Branch(name='Tagbak Branch', location='Iloilo City')
     b2 = Branch(name='Zarraga Branch', location='Iloilo')
@@ -23,19 +20,20 @@ with app.app_context():
     db.session.add_all([b1, b2, b3])
     db.session.commit()
 
-    # 4. CREATE USERS
+    # 3. Create Admin and Staff
     print("Creating users...")
     pw_hash = bcrypt.generate_password_hash('password123').decode('utf-8')
     
-    # We set username to your EMAIL so you can login with it
+    # We set your email as the username so you can login with it
     admin = User(
-        username='admin',
-        password_hash=pw_hash,
-        role='admin',
-        branch_id=b1.id,
+        username='rreynieljosh@gmail.com', 
+        password_hash=pw_hash, 
+        role='admin', 
+        branch_id=b1.id, 
         email='rreynieljosh@gmail.com'
     )
     
+    # Staff (Exactly as you wanted them)
     staff_tagbak = User(username='staff_tagbak', password_hash=pw_hash, role='staff', branch_id=b1.id, email='staff_tag@h2ops.com')
     staff_zarraga = User(username='staff_zarraga', password_hash=pw_hash, role='staff', branch_id=b2.id, email='staff_zar@h2ops.com')
     staff_leganes = User(username='staff_leganes', password_hash=pw_hash, role='staff', branch_id=b3.id, email='staff_leg@h2ops.com')
@@ -43,7 +41,7 @@ with app.app_context():
     db.session.add_all([admin, staff_tagbak, staff_zarraga, staff_leganes])
     db.session.commit()
 
-    # 5. CREATE PRODUCTS
+    # 4. Create Products
     print("Creating products...")
     branches = [b1, b2, b3]
     for b in branches:
@@ -51,4 +49,4 @@ with app.app_context():
         db.session.add(p1)
         
     db.session.commit()
-    print("DATABASE RESET AND SEEDED SUCCESSFULLY!")
+    print("DATABASE SEEDED SUCCESSFULLY!")
