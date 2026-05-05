@@ -1,9 +1,8 @@
-
 import os
 from flask import Flask, redirect, url_for, session
 from dotenv import load_dotenv
 from extensions import db, bcrypt, login_manager, mail
-from models import User, Branch # Ensure models are known to SQLAlchemy
+from models import User, Branch 
 
 # Import blueprints
 from routes.auth import auth_bp
@@ -16,25 +15,23 @@ from routes.users import users_bp
 
 def create_app():
     app = Flask(__name__)
-    
-    # Load environment variables
     load_dotenv()
 
-# Configure the app
-    app.config['SECRET_KEY'] = 'dev-secret-key-h2ops-secure-token-123'
+    app.config['SECRET_KEY'] = os.getenv('SECRET_KEY', 'dev-secret-key-h2ops-secure-token-123')
+    
     database_url = os.getenv('DATABASE_URL')
+    # Critical fix for Render/SQLAlchemy compatibility
     if database_url and database_url.startswith("postgres://"):
         database_url = database_url.replace("postgres://", "postgresql://", 1)
 
+    # Fallback to SQLite only if not on Render (for local dev)
     if not database_url:
-        if not os.getenv('RENDER'):
-            database_url = os.getenv('LOCAL_DATABASE_URL', 'mysql+pymysql://root@127.0.0.1:3306/h2ops_db')
-        else:
-            database_url = 'sqlite:///data.db'
+        database_url = 'sqlite:///data.db'
             
     app.config['SQLALCHEMY_DATABASE_URI'] = database_url
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-    # Email configuration
+    
+    # Mail Config
     app.config['MAIL_SERVER'] = os.getenv('MAIL_SERVER', 'smtp.gmail.com')
     app.config['MAIL_PORT'] = int(os.getenv('MAIL_PORT', 587))
     app.config['MAIL_USE_TLS'] = os.getenv('MAIL_USE_TLS', 'True').lower() in ['true', '1', 't']
@@ -42,15 +39,15 @@ def create_app():
     app.config['MAIL_PASSWORD'] = os.getenv('MAIL_PASSWORD')
     app.config['MAIL_DEFAULT_SENDER'] = os.getenv('MAIL_DEFAULT_SENDER', os.getenv('MAIL_USERNAME'))
 
-    # Initialize extensions with app
+    # Init Extensions
     db.init_app(app)
     bcrypt.init_app(app)
     login_manager.init_app(app)
     mail.init_app(app)
 
-    # Register blueprints
+    # Register Blueprints
     app.register_blueprint(auth_bp, url_prefix='/auth')
-    app.register_blueprint(main_bp) # main dashboard routes
+    app.register_blueprint(main_bp) 
     app.register_blueprint(sales_bp, url_prefix='/sales')
     app.register_blueprint(inventory_bp, url_prefix='/inventory')
     app.register_blueprint(customers_bp, url_prefix='/customers')
@@ -63,26 +60,23 @@ def create_app():
         if current_user.is_authenticated:
             active_branch_id = session.get('active_branch_id')
             active_branch = Branch.query.get(active_branch_id) if active_branch_id else None
-            
-            # Admins get to see all branches for switching
             all_branches = Branch.query.all() if current_user.role == 'admin' else []
-            
-            return dict(
-                active_branch=active_branch,
-                available_branches=all_branches
-            )
+            return dict(active_branch=active_branch, available_branches=all_branches)
         return dict()
 
     @app.route('/')
     def index():
         return redirect(url_for('main.dashboard'))
 
+    # THIS SECTION IS THE MAGIC: It creates the tables on Render automatically
+    with app.app_context():
+        db.create_all() 
+
     return app
 
 app = create_app()
 
 if __name__ == '__main__':
-    with app.app_context():
-        # db.create_all() # We will create tables in seed.py or manually
-        pass
-    app.run(debug=True, host='0.0.0.0', port=5000)
+    # Use the PORT provided by Render, or default to 5000
+    port = int(os.environ.get('PORT', 5000))
+    app.run(host='0.0.0.0', port=port)
